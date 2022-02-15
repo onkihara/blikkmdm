@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+    mdm:
+        build: .
+        image: hangerer/blikkmdm
+        restart: always
+        ports:
+            - 8085:8080
+        environment:
+            HMDM_SQL_USER: ${HMDM_SQL_USER}
+            HMDM_SQL_PASS: ${HMDM_SQL_PASS}
+            HMDM_SQL_BASE: ${HMDM_SQL_BASE}
+            HMDM_SQL_HOST: ${HMDM_SQL_HOST}
+            HMDM_SQL_PORT: ${HMDM_SQL_PORT}
+            HMDM_LANGUAGE: ${HMDM_LANGUAGE}
+            HMDM_TOMCAT_PORT: ${HMDM_TOMCAT_PORT}
+            HMDM_TOMCAT_HOST: ${HMDM_TOMCAT_HOST}
+            HMDM_TOMCAT_PORTOCOL: ${HMDM_TOMCAT_PORTOCOL}
+            HMDM_TOMCAT_DOMAIN: ${HMDM_TOMCAT_DOMAIN}
+            ADMIN_EMAIL: ${ADMIN_EMAIL}
+            SMTP_HOST: ${SMTP_HOST}
+            SMTP_PORT: ${SMTP_PORT}
+            SMTP_SSL: ${SMTP_SSL}
+            SMTP_STARTTLS: ${SMTP_STARTTLS}
+            SMTP_FROM: ${SMTP_FROM}
+        volumes:
+            - blikkmdm-database:/var/lib/postgresql/11/main
+volumes:
+    blikkmdm-database:
+        external: true
+
+# create external volume first: docker volume create --name blikkmdm-database -d local
