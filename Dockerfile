@@ -1,8 +1,8 @@
 FROM ubuntu:20.04
 FROM tomcat:9.0.38-jdk8-openjdk-buster
 
-ENV https_proxy 'http://co076:PRRocinante4@10.240.150.130:8020'
-ENV http_proxy 'http://co076:PRRocinante4@10.240.150.130:8020'
+#ENV https_proxy 'http://co076:PRR....4@10.240.150.130:8020'
+#ENV http_proxy 'http://co076:PRR....4@10.240.150.130:8020'
 
 RUN mkdir -p /home/hmdmr && cd /home/hmdmr
 WORKDIR /home/hmdmr
