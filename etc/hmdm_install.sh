@@ -203,15 +203,6 @@ TABLE_EXISTS=$(echo "\dt users" | psql $PSQL_CONNSTRING 2>&1 | grep public)
 if [ ! -z "$TABLE_EXISTS" ]; then
     echo "The database is already setup."
     echo "To re-deploy Headwind MDM, the database needs to be cleared."
-    echo "Clear the database? ALL DATA WILL BE LOST!"
-    read -e -p "Type \"erase\" to clear the database and continue setup: " RESPONSE
-    if [ "$RESPONSE" == "erase" ]; then
-        echo "DROP TABLE IF EXISTS applicationfilestocopytemp, applications, applicationversions, applicationversionstemp, configurationapplicationparameters, configurationapplications, configurationapplicationsettings, configurationfiles, configurations, customers, databasechangelog, databasechangeloglock, deviceapplicationsettings, devicegroups, devices, devicestatuses, groups, icons, pendingpushes, permissions, plugin_apuppet_data, plugin_apuppet_settings, plugin_audit_log, plugin_deviceinfo_deviceparams, plugin_deviceinfo_deviceparams_device, plugin_deviceinfo_deviceparams_gps, plugin_deviceinfo_deviceparams_mobile, plugin_deviceinfo_deviceparams_mobile2, plugin_deviceinfo_deviceparams_wifi, plugin_deviceinfo_settings, plugin_devicelocations_history, plugin_devicelocations_latest, plugin_devicelocations_settings, plugin_devicelog_log, plugin_devicelog_setting_rule_devices, plugin_devicelog_settings, plugin_devicelog_settings_rules, plugin_devicereset_status, plugin_knox_rules, plugin_messaging_messages, plugin_openvpn_defaults, plugin_photo_photo, plugin_photo_photo_places, plugin_photo_places, plugin_photo_settings, plugins, pluginsdisabled, pushmessages, settings, trialkey, uploadedfiles, userconfigurationaccess, userdevicegroupsaccess, userhints, userhinttypes, userrolepermissions, userroles, userrolesettings, users" |  psql $PSQL_CONNSTRING >/dev/null 2>&1
-	echo "Database has been cleared."
-    else
-        echo "Headwind MDM installation aborted"
-	exit 1
-    fi
 fi
 
 echo
@@ -267,13 +258,13 @@ echo
 
 #read -e -p "Protocol (http|https) [$DEFAULT_PROTOCOL]: " -i "$DEFAULT_PROTOCOL" PROTOCOL
 PROTOCOL=$DEFAULT_PROTOCOL
-while [ -z $BASE_DOMAIN ]; do
+#while [ -z $BASE_DOMAIN ]; do
     #read -e -p "Domain name or public IP (e.g. example.com): " -i "$DEFAULT_BASE_DOMAIN" BASE_DOMAIN
     BASE_DOMAIN=$DEFAULT_BASE_DOMAIN
-    if [ -z $BASE_DOMAIN ]; then
-        echo "Please enter a non-empty domain name"
-    fi
-done
+    # if [ -z $BASE_DOMAIN ]; then
+    #     echo "Please enter a non-empty domain name"
+    # fi
+#done
 #read -e -p "Port (e.g. 8080, leave empty for default ports 80 or 443): " -i "$DEFAULT_PORT" PORT
 #read -e -p "Project path on server (e.g. /hmdm) or ROOT: " -i "$DEFAULT_BASE_PATH" BASE_PATH
 PORT=$DEFAULT_PORT
@@ -384,14 +375,16 @@ fi
 echo "Deployment successful, initializing the database..."
 
 # Initialize database
-cat ./install/sql/hmdm_init.$LANGUAGE.sql | sed "s|_HMDM_BASE_|$LOCATION|g; s|_HMDM_VERSION_|$CLIENT_VERSION|g; s|_HMDM_APK_|$CLIENT_APK|g; s|_ADMIN_EMAIL_|$ADMIN_EMAIL|g;" > $TEMP_SQL_FILE
-cat $TEMP_SQL_FILE | psql $PSQL_CONNSTRING > /dev/null 2>&1
-if [ "$?" -ne 0 ]; then
-    echo "ERROR: failed to execute SQL script!"
-    echo "See $TEMP_SQL_FILE for details."
-    exit 1
+if [ -z "$TABLE_EXISTS" ]; then
+    cat ./install/sql/hmdm_init.$LANGUAGE.sql | sed "s|_HMDM_BASE_|$LOCATION|g; s|_HMDM_VERSION_|$CLIENT_VERSION|g; s|_HMDM_APK_|$CLIENT_APK|g; s|_ADMIN_EMAIL_|$ADMIN_EMAIL|g;" > $TEMP_SQL_FILE
+    cat $TEMP_SQL_FILE | psql $PSQL_CONNSTRING > /dev/null 2>&1
+    if [ "$?" -ne 0 ]; then
+        echo "ERROR: failed to execute SQL script!"
+        echo "See $TEMP_SQL_FILE for details."
+        exit 1
+    fi
+    rm -f $TEMP_SQL_FILE > /dev/null 2>&1
 fi
-rm -f $TEMP_SQL_FILE > /dev/null 2>&1
 
 echo
 echo "======================================"
@@ -477,8 +470,9 @@ echo
 
 # Download required files
 #read -e -p "Move required APKs from h-mdm.com to your server [Y/n]?: " -i "Y" REPLY
-REPLY="y"
-if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+#REPLY="y"
+#if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+if [ -z "$TABLE_EXISTS" ]; then
     FILES=$(echo "SELECT url FROM applicationversions WHERE url IS NOT NULL" | psql $PSQL_CONNSTRING 2>/dev/null | tail -n +3 | head -n -2)
     CURRENT_DIR=$(pwd)
     cd $LOCATION/files

@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
     mdm:
-        build: .
+        #build: .
         image: hangerer/blikkmdm
         restart: always
         ports:
