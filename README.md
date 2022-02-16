@@ -7,7 +7,8 @@ Headwind MDM is a Mobile Device Management platform for Android devices, designe
 
 [https://h-mdm.com](https://h-mdm.com)
 
-hmdm_install.sh is heavily adjusted to run without manual input and no ssl
+hmdm_install.sh is heavily adjusted to run without manual input and no ssl!
+Project: https://github.com/onkihara/blikkmdm
 
 ## RUnning the Docker Container
 
@@ -15,15 +16,25 @@ hmdm_install.sh is heavily adjusted to run without manual input and no ssl
 docker-compose up -d
 ```
 
-#### Available environmental variables
+#### Available environmental variables must all be set
 
-- **HMDM_SQL_HOST**: PostgreSQL host (IP or URL) (Default: localhost)
-- **HMDM_SQL_PORT**: PostgreSQL port (Default: 5432)
-- **HMDM_SQL_BASE**: PostgreSQL database (Default: hmdm)
-- **HMDM_SQL_USER**: PostgreSQL username (Default: hmdm)
-- **HMDM_SQL_PASS**: PostgreSQL password
-- **HMDM_LANGUAGE**: Language (Default: en)
-- **HMDM_TOMCAT_PORTOCOL**: Tomcat HTTP Portocol (Options: http | https) (Default: http)
+- **HMDM_SQL_HOST**: localhost
+- **HMDM_SQL_PORT**: 5432
+- **HMDM_SQL_BASE**: hmdm
+- **HMDM_SQL_USER**: hmdm
+- **HMDM_SQL_PASS**: (PostgreSQL password)
+- **HMDM_LANGUAGE**: en
+- **HMDM_TOMCAT_PORT**: 8080
+- **HMDM_TOMCAT_EXTERNPORT**: (empty if 80)
+- **HMDM_TOMCAT_HOST**: localhost
+- **HMDM_TOMCAT_PROTOCOL**: http
+- **HMDM_TOMCAT_DOMAIN**: external
+- **ADMIN_EMAIL**: (adminemail)
+- **MTP_HOST**: (mailserver)
+- **SMTP_PORT**: 25
+- **SMTP_SSL**: 0
+- **SMTP_STARTTLS**: 0
+- **SMTP_FROM**: (fromemail)
 
 ## Features
 
