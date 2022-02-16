@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
     mdm:
-        #build: .
+        build: .
         image: hangerer/blikkmdm
         restart: always
         ports:
@@ -15,6 +15,7 @@ services:
             HMDM_SQL_PORT: ${HMDM_SQL_PORT}
             HMDM_LANGUAGE: ${HMDM_LANGUAGE}
             HMDM_TOMCAT_PORT: ${HMDM_TOMCAT_PORT}
+            HMDM_TOMCAT_EXTERNPORT: ${HMDM_TOMCAT_EXTERNPORT}
             HMDM_TOMCAT_HOST: ${HMDM_TOMCAT_HOST}
             HMDM_TOMCAT_PORTOCOL: ${HMDM_TOMCAT_PORTOCOL}
             HMDM_TOMCAT_DOMAIN: ${HMDM_TOMCAT_DOMAIN}
